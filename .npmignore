@@ -19,6 +19,9 @@ node_modules
 *.local
 *.bak
 
+.rollup.config.js
+tsconfig.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
