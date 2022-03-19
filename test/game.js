@@ -1,13 +1,11 @@
-import { getProductDbPath, getGames, installedAddons, characters } from "../dist/index.js";
+import { productDbPath, products, addons, characters } from "../dist/index.js";
 
-const productDb = getProductDbPath();
+const path = productDbPath();
 
-if (productDb) {
-  const games = getGames(productDb);
-
-  games.forEach((game) => {
-    const addons = installedAddons(game.path, game.subpath);
-    const chars = characters(game.path);
-    console.log(game, addons, chars);
+if (path) {
+  products(path).forEach((game) => {
+    const installed_addons = addons(game.path, game.subpath);
+    const local_characters = characters(game.path);
+    console.log(game, installed_addons, local_characters);
   });
 }

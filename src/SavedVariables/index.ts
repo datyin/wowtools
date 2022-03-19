@@ -1,4 +1,5 @@
 import { writeFileSync } from "fs";
+import { normalize } from "path";
 import { toFinite, trimStart, trimEnd } from "lodash-es";
 import { read } from "../util/filesystem.js";
 import { showError } from "../util/log.js";
@@ -39,15 +40,14 @@ class SavedVariable {
   #data: Map<any, any> = new Map();
 
   constructor(_file: string) {
-    this.#file = _file;
-
-    const content = read(_file).toString().trim();
+    this.#file = normalize(_file);
+    this.#content = read(_file).toString().trim();
 
     try {
       const results = new Map();
       const paths: string[] = [];
 
-      content.split("\n").forEach((line: string, lineNumber: number) => {
+      this.#content.split("\n").forEach((line: string, lineNumber: number) => {
         line = line.trim();
 
         if (!line) {
@@ -142,10 +142,8 @@ class SavedVariable {
         }
       });
 
-      this.#content = content;
       this.#data = results;
     } catch (error) {
-      this.#content = "";
       this.#data = new Map();
       showError(_SCRIPT, error);
     }

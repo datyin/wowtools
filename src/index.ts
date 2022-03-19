@@ -1,6 +1,7 @@
-import { getProductDbPath, getGames } from "./battle.net/products.js";
-import SavedVariable from "./SavedVariables/index.js";
-import { installedAddons, downloadAddons } from "./addons/index.js";
+import { productDbPath, productDbParse, products, supportedProducts } from "./battle.net/products.js";
+import { addons, addonsDownload } from "./addons/index.js";
 import { characters } from "./characters/index.js";
+import SavedVariable from "./SavedVariables/index.js";
+import WTFConfig from "./config/wtf.js";
 
-export { getProductDbPath, getGames, SavedVariable, installedAddons, downloadAddons, characters };
+export { productDbPath, productDbParse, products, supportedProducts, SavedVariable, WTFConfig, addons, addonsDownload, characters };

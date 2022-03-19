@@ -1,13 +1,9 @@
 import { values } from "lodash-es";
 import fg from "fast-glob";
-
-interface Addon {
-  name: string;
-  toc: string;
-}
+import type { Addon, GameSubPath } from "../../typings/index.js";
 
 // https://wowpedia.fandom.com/wiki/TOC_format
-export function installedAddons(path: string, game: string): Addon[] {
+export function addons(path: string, game: GameSubPath): Addon[] {
   if (typeof path !== "string" || !path.trim()) {
     return [];
   }
@@ -44,8 +40,9 @@ export function installedAddons(path: string, game: string): Addon[] {
         break;
       }
 
-      case "_classic_era_":
-      case "_classic_era_ptr_": {
+      case "_classic_era":
+      case "_classic_era_ptr":
+      case "_classic_era_beta": {
         if (lcToc === `${lcName}_tbc.toc` || lcToc === `${lcName}-bcc.toc`) {
           addons[name] = { name, toc };
         }
@@ -72,6 +69,7 @@ export function installedAddons(path: string, game: string): Addon[] {
   return values(addons);
 }
 
-export async function downloadAddons() {
+export async function addonsDownload(path: string, game: GameSubPath) {
+  console.log(path, game);
   //
 }

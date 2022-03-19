@@ -2,17 +2,18 @@ import { existsSync, readFileSync } from "fs";
 import { normalize, join } from "path";
 import protobufjs from "protobufjs";
 import Schema from "./product.db.schema.js";
-import { ProductDB, SupportedGameLanguages } from "./product.db.js";
-import { getConfig, getConfigItem } from "../config/wtf.js";
+import WTFConfig from "../config/wtf.js";
 import { showError } from "../util/log.js";
 import globals from "../global.js";
+import type { Game, GameProduct, GameSubPath, GameUID, SupportedGame } from "../../typings/index.js";
+import type { ProductDB, ProductRegion, SupportedGameLanguages } from "../../typings/product.db.js";
 
 const PREFIX = "battle.net/products.ts";
 
 const proot = protobufjs.Root.fromJSON(Schema);
 const decoder = proot.lookupType("database");
 
-export const gameList = [
+export const supportedProducts: SupportedGame[] = [
   {
     subpath: "_retail_",
     uid: "wow",
@@ -105,7 +106,7 @@ export const gameList = [
   }
 ];
 
-export function getProductDbPath(): string | undefined {
+export function productDbPath(): string | undefined {
   switch (globals.platform) {
     case "win32": {
       for (let charCode = 65; charCode < 91; charCode++) {
@@ -133,24 +134,79 @@ export function getProductDbPath(): string | undefined {
   return undefined;
 }
 
-export interface Game {
-  playable: boolean;
-  region: string;
-  path: string;
-  text_language: SupportedGameLanguages;
-  speech_language: SupportedGameLanguages;
-  uid: string;
-  product: string;
-  family: string;
-  subpath: string;
-  version: string;
-  label: string;
-  binary: string;
+export function productDbParse(path: string | null | undefined): ProductDB | undefined {
+  if (typeof path !== "string" || !path.trim()) {
+    path = productDbPath();
+  }
+
+  if (!path) {
+    return undefined;
+  }
+
+  try {
+    const content = readFileSync(path);
+    return decoder.decode(content).toJSON() as ProductDB;
+  } catch (error) {
+    showError(PREFIX, error);
+    return undefined;
+  }
 }
 
-export function getGames(path: string | null | undefined): Game[] {
+function validRegion(input: string): ProductRegion {
+  return ["us", "eu", "cn", "kr", "tw", "sg", "xx", "beta"].includes(input) ? (input as ProductRegion) : "";
+}
+
+function validUID(input: string): GameUID | "" {
+  return [
+    "wow",
+    "wow_ptr",
+    "wow_beta",
+    "wow_classic",
+    "wow_classic_ptr",
+    "wow_classic_beta",
+    "wow_classic_era",
+    "wow_classic_era_ptr",
+    "wow_classic_era_beta"
+  ].includes(input)
+    ? (input as GameUID)
+    : "";
+}
+
+function validProduct(input: string): GameProduct | "" {
+  return [
+    "wow",
+    "wowt",
+    "wow_beta",
+    "wow_classic",
+    "wow_classic_ptr",
+    "wow_classic_beta",
+    "wow_classic_era",
+    "wow_classic_era_ptr",
+    "wow_classic_era_beta"
+  ].includes(input)
+    ? (input as GameProduct)
+    : "";
+}
+
+function validSubPath(input: string): GameSubPath | "" {
+  return [
+    "_retail_",
+    "_ptr_",
+    "_beta_",
+    "_classic_",
+    "_classic_ptr_",
+    "_classic_beta_",
+    "_classic_era",
+    "_classic_era_ptr",
+    "_classic_era_beta"
+  ].includes(input)
+    ? (input as GameSubPath)
+    : "";
+}
+
+export function products(path: string | null | undefined): Game[] {
   if (typeof path !== "string" || !path.trim()) {
-    path = getProductDbPath();
+    path = productDbPath();
   }
 
   if (typeof path !== "string") {
@@ -167,8 +223,7 @@ export function getGames(path: string | null | undefined): Game[] {
 
   try {
     if (path.endsWith("product.db")) {
-      const content = readFileSync(path);
-      const decoded = decoder.decode(content).toJSON() as ProductDB;
+      const decoded = productDbParse(path);
 
       if (!decoded?.products) {
         return [];
@@ -179,7 +234,13 @@ export function getGames(path: string | null | undefined): Game[] {
           return;
         }
 
-        const found = gameList.find((g) => g.uid === product.uid);
+        const valid_uid = validUID(product.uid);
+        const valid_product = validProduct(product.product);
+        const valid_subpath = validSubPath(product.settings?.subpath ?? "");
+
+        if (!valid_uid || !valid_product || !valid_subpath) return;
+
+        const found = supportedProducts.find((g) => g.uid === product.uid);
 
         if (!found) {
           return;
@@ -193,13 +254,13 @@ export function getGames(path: string | null | undefined): Game[] {
 
         games.push({
           playable: product.product_state?.base?.playable === true,
-          region: product.settings?.region ?? "",
+          region: validRegion(product.settings?.region ?? ""),
           path,
           text_language: product.settings?.text_languages ?? "",
           speech_language: product.settings?.speech_languages ?? "",
-          uid: product.uid,
-          product: product.product,
-          subpath: product.settings.subpath,
+          uid: valid_uid,
+          product: valid_product,
+          subpath: valid_subpath,
           version: product.product_state?.base?.local_version ?? "",
           family: product.product_family,
           label: found.label,
@@ -213,11 +274,13 @@ export function getGames(path: string | null | undefined): Game[] {
 
         build.forEach((line) => {
           const seq = line.trim().split("|");
-          const region = seq[0] ?? "";
+          const region = validRegion(seq[0] ?? "");
           const version = seq[12] ?? "";
-          const product = seq[13] ?? "";
+          const product = validProduct(seq[13] ?? "");
 
-          const found = gameList.find((g) => g.product === product);
+          if (!product) return;
+
+          const found = supportedProducts.find((g) => g.product === product);
 
           if (!found) {
             return;
@@ -229,16 +292,16 @@ export function getGames(path: string | null | undefined): Game[] {
             return;
           }
 
-          const cfg = getConfig(`${gamePath}/WTF/Config.wtf`);
+          const cfg = new WTFConfig(`${gamePath}/WTF/Config.wtf`);
 
           games.push({
             playable: true,
             region,
             path: gamePath,
-            text_language: (getConfigItem(cfg, "textLocale")?.value as SupportedGameLanguages) ?? "",
-            speech_language: (getConfigItem(cfg, "audioLocale")?.value as SupportedGameLanguages) ?? "",
+            text_language: (cfg.get("textLocale") as SupportedGameLanguages) ?? "",
+            speech_language: (cfg.get("audioLocale") as SupportedGameLanguages) ?? "",
             uid: found.uid,
-            product: product,
+            product,
             subpath: found.subpath,
             version,
             family: "wow",
@@ -250,26 +313,26 @@ export function getGames(path: string | null | undefined): Game[] {
         const flavor = readFileSync(`${path}/.flavor.info`, { encoding: "utf8" }).trim().split("\n");
         flavor.shift(); // Product Flavor!STRING:0
 
-        const product = flavor[0]?.trim() ?? "";
+        const product = validProduct(flavor[0]?.trim() ?? "");
 
         if (!product) {
           return [];
         }
 
-        const found = gameList.find((g) => g.product === product);
+        const found = supportedProducts.find((g) => g.product === product);
 
         if (!found) {
           return [];
         }
 
-        const cfg = getConfig(`${path}/WTF/Config.wtf`);
+        const cfg = new WTFConfig(`${path}/WTF/Config.wtf`);
 
         games.push({
           playable: true,
           region: "",
           path,
-          text_language: (getConfigItem(cfg, "textLocale")?.value as SupportedGameLanguages) ?? "",
-          speech_language: (getConfigItem(cfg, "audioLocale")?.value as SupportedGameLanguages) ?? "",
+          text_language: (cfg.get("textLocale") as SupportedGameLanguages) ?? "",
+          speech_language: (cfg.get("audioLocale") as SupportedGameLanguages) ?? "",
           uid: found.uid,
           product: product,
           subpath: found.subpath,

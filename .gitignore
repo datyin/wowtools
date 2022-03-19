@@ -17,6 +17,9 @@ dist
 *.local
 *.bak
 
+test/*.lua
+test/*.wtf
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

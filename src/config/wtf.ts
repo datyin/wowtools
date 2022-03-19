@@ -1,29 +1,24 @@
-import { existsSync, readFileSync } from "fs";
+import { EOL } from "os";
 import { normalize } from "path";
+import { toString } from "lodash-es";
+import { read } from "../util/filesystem.js";
+import type { ConfigItem } from "../../typings/index.js";
+import { showError } from "src/util/log.js";
+import { writeFileSync } from "fs";
 
-export interface ConfigItem {
-  cmd: string;
-  key: string;
-  value: string;
-}
+const _SCRIPT = "config/wtf.ts";
 
-export function getConfig(path: string): ConfigItem[] {
-  if (typeof path !== "string" || !path.trim()) {
-    return [];
-  }
+class WTFConfig {
+  #file: string = "";
+  #content: string = "";
+  #data: ConfigItem[] = [];
 
-  path = normalize(path);
+  constructor(_file: string) {
+    this.#file = normalize(_file);
+    this.#content = read(_file).toString().trim();
 
-  if (!existsSync(path)) {
-    return [];
-  }
-
-  try {
-    const output: Record<string, ConfigItem> = {};
-
-    readFileSync(path, { encoding: "utf8" })
-      .split("\n")
-      .forEach((line) => {
+    try {
+      this.#content.split("\n").forEach((line) => {
         line = line.trim();
 
         if (!line) {
@@ -40,21 +35,74 @@ export function getConfig(path: string): ConfigItem[] {
         const key = match[2];
         const value = match[3] ?? "";
 
-        output[`${cmd}_${key}`] = { cmd, key, value };
+        this.#data.push({ cmd, key, value });
       });
+    } catch (error) {
+      showError(_SCRIPT, error);
+    }
+  }
 
-    return Object.values(output);
-  } catch (error) {
-    console.error(error);
-    return [];
+  file() {
+    return this.#file;
+  }
+
+  raw() {
+    return this.#content;
+  }
+
+  data() {
+    return Array.isArray(this.#data) ? this.#data : [];
+  }
+
+  get(key: string, cmd: string = "SET"): string | undefined {
+    if (typeof cmd !== "string" || !cmd.trim()) {
+      cmd = "SET";
+    }
+
+    const found = this.#data.find((i) => i.cmd === cmd && i.key === key);
+    return found ? found.value : undefined;
+  }
+
+  set(key: string, cmd: string, value: string) {
+    const index = this.#data.findIndex((i) => i.cmd === cmd && i.key === key);
+
+    if (index !== -1) {
+      this.#data[index]!.cmd = cmd;
+      this.#data[index]!.key = key;
+      this.#data[index]!.value = toString(value);
+    } else {
+      this.#data.push({ cmd, key, value });
+    }
+  }
+
+  delete(key: string, cmd: string = "SET") {
+    if (typeof cmd !== "string" || !cmd.trim()) {
+      cmd = "SET";
+    }
+
+    const index = this.#data.findIndex((i) => i.cmd === cmd && i.key === key);
+
+    if (index !== -1) {
+      this.#data.splice(index, 1);
+    }
+  }
+
+  save(file: string): boolean {
+    if (typeof file !== "string" || !file.trim() || !file.endsWith(".wtf")) {
+      return false;
+    }
+
+    try {
+      let str = "";
+      this.#data.forEach((i) => (str += `${i.cmd} ${i.key} "${i.value}"${EOL}`));
+
+      writeFileSync(file, str, { encoding: "utf8" });
+      return true;
+    } catch (error) {
+      showError(_SCRIPT, error);
+      return false;
+    }
   }
 }
 
-export function getConfigItem(config: ConfigItem[], key: string): ConfigItem | undefined {
-  if (Array.isArray(config) && config.length) {
-    const found = config.find((c) => c.key === key);
-    return found ? found : undefined;
-  }
-
-  return undefined;
-}
+export default WTFConfig;

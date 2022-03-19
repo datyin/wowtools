@@ -62,6 +62,6 @@
     /* Completeness */
     "skipLibCheck": true
   },
-  "include": ["./src/**/*.ts"],
+  "include": ["./typings/**/*.d.ts", "./src/**/*.ts"],
   "exclude": ["**/node_modules"]
 }
