@@ -1,0 +1,41 @@
+{
+  "name": "wowtools",
+  "version": "1.0.0",
+  "description": "World of Warcraft Tools",
+  "main": "./dist/index.js",
+  "type": "module",
+  "typings": "./typings/index.d.ts",
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "dev": "rollup -c rollup.config.js -w",
+    "build": "rollup -c rollup.config.js"
+  },
+  "keywords": [
+    "wow",
+    "worldofwarcraft",
+    "lua",
+    "lua-parser",
+    "wtf"
+  ],
+  "author": {
+    "name": "Jove Jonovski",
+    "email": "jovejonovski@gmail.com",
+    "url": "https://github.com/datyin"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.2",
+    "@rollup/plugin-typescript": "^8.3.1",
+    "@types/lodash-es": "^4.17.5",
+    "@types/node": "^17.0.6",
+    "rollup": "^2.70.1",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "fast-glob": "^3.2.7",
+    "lodash-es": "^4.17.21",
+    "protobufjs": "^6.11.2"
+  }
+}

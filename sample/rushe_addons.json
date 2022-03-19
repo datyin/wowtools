@@ -1,0 +1,122 @@
+{
+  "!BugGrabber": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/13344",
+    "provider": "curseforge",
+    "required": false
+  },
+  "AdvancedInterfaceOptions": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/99982",
+    "provider": "curseforge",
+    "required": false
+  },
+  "AngryKeystones": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/102522",
+    "provider": "curseforge",
+    "required": false
+  },
+  "Bagnon": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/1592",
+    "provider": "curseforge",
+    "required": true
+  },
+  "BigWigs": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/2382",
+    "provider": "curseforge",
+    "required": true
+  },
+  "BugSack": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/6273",
+    "provider": "curseforge",
+    "required": false
+  },
+  "Details": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/61284",
+    "provider": "curseforge",
+    "required": true
+  },
+  "ElvUI": {
+    "download_url": "https://github.com/tukui-org/ElvUI/archive/refs/heads/main.zip",
+    "provider": "github-repo-download",
+    "required": true
+  },
+  "ElvUI_WindTools": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/300361",
+    "provider": "curseforge",
+    "required": true
+  },
+  "FishingBuddy": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/15093",
+    "provider": "curseforge",
+    "required": false
+  },
+  "HandyNotes": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/14154",
+    "provider": "curseforge",
+    "required": false
+  },
+  "HandyNotes_Shadowlands": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/363739",
+    "provider": "curseforge",
+    "required": false
+  },
+  "LittleWigs": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/4383",
+    "provider": "curseforge",
+    "required": true
+  },
+  "Masque": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/13592",
+    "provider": "curseforge",
+    "required": true
+  },
+  "Masque_Raeli": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/283762",
+    "provider": "curseforge",
+    "required": true
+  },
+  "MBB": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/14354",
+    "provider": "curseforge",
+    "required": true
+  },
+  "MRT": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/79879",
+    "provider": "curseforge",
+    "required": false
+  },
+  "MythicDungeonTools": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/288981",
+    "provider": "curseforge",
+    "required": false
+  },
+  "OmniCD": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/306489",
+    "provider": "curseforge",
+    "required": true
+  },
+  "OPie": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/19406",
+    "provider": "curseforge",
+    "required": true
+  },
+  "SavedInstances": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/13998",
+    "provider": "curseforge",
+    "required": false
+  },
+  "RusheUI_SharedMedia": {
+    "url": "https://api.github.com/repos/datyin/RusheUI_SharedMedia/releases/latest",
+    "provider": "github-release-download",
+    "required": true
+  },
+  "VenturePlan": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/498644",
+    "provider": "curseforge",
+    "required": false
+  },
+  "WeakAuras": {
+    "url": "https://addons-ecs.forgesvc.net/api/v2/addon/65387",
+    "provider": "curseforge",
+    "required": true
+  }
+}
