@@ -1,5 +1,5 @@
 import { EOL } from "os";
-import { isBoolean, isNumber, repeat } from "lodash-es";
+import { isBoolean, isNumber, repeat } from "lodash";
 
 function setIndex(index: string | number, isTopLevel: boolean): string {
   if (`${index}`.startsWith("no_index_") || (typeof index === "string" && index.startsWith("[") && index.endsWith("]"))) {

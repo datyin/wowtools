@@ -1,6 +1,6 @@
 import { EOL } from "os";
 import { normalize } from "path";
-import { toString } from "lodash-es";
+import { toString } from "lodash";
 import { read } from "../util/filesystem.js";
 import type { ConfigItem } from "../../typings/index.js";
 import { showError } from "src/util/log.js";

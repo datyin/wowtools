@@ -1,4 +1,4 @@
-import { values } from "lodash-es";
+import { values } from "lodash";
 import fg from "fast-glob";
 import type { Addon, GameSubPath } from "../../typings/index.js";
 

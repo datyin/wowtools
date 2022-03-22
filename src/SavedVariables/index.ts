@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { normalize } from "path";
-import { toFinite, trimStart, trimEnd } from "lodash-es";
+import { toFinite, trimStart, trimEnd } from "lodash";
 import { read } from "../util/filesystem.js";
 import { showError } from "../util/log.js";
 import generateLua from "./write.js";
