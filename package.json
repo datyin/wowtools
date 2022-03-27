@@ -30,17 +30,20 @@
     "require": "./dist/index.cjs"
   },
   "devDependencies": {
+    "@optimize-lodash/rollup-plugin": "^3.0.0",
     "@rollup/plugin-commonjs": "^21.0.2",
     "@rollup/plugin-typescript": "^8.3.1",
     "@types/lodash": "^4.14.180",
     "@types/node": "^17.0.21",
     "rollup": "^2.70.1",
-    "rollup-plugin-optimize-lodash-imports": "^1.0.2",
+    "rollup-plugin-node-externals": "^4.0.0",
     "typescript": "^4.6.2"
   },
   "dependencies": {
+    "axios": "^0.26.1",
     "fast-glob": "^3.2.7",
     "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "protobufjs": "^6.11.2"
   }
 }

@@ -1,5 +1,5 @@
-import { values } from "lodash";
 import fg from "fast-glob";
+import { values } from "lodash";
 import type { Addon, GameSubPath } from "../../typings/index.js";
 
 // https://wowpedia.fandom.com/wiki/TOC_format
@@ -67,9 +67,4 @@ export function addons(path: string, game: GameSubPath): Addon[] {
   });
 
   return values(addons);
-}
-
-export async function addonsDownload(path: string, game: GameSubPath) {
-  console.log(path, game);
-  //
 }
