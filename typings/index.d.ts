@@ -104,7 +104,6 @@ export function productDbPath(): string | undefined;
 export function productDbParse(path: string | null | undefined): ProductDB | undefined;
 export function products(path: string | null | undefined): Game[];
 export function addons(path: string, game: GameSubPath): Addon[];
-export function addonsDownload(path: string, game: GameSubPath): Addon[];
 export function characters(path: string): Character[];
 export function parseFlavor(path: string): string;
 export function parseBuild(path: string): string;
