@@ -186,7 +186,7 @@ export function products(path: string | null | undefined): Game[] {
           return;
         }
 
-        const found = supportedProducts.find((g) => g.uid === product.uid);
+        const found = supportedProducts.find((g) => g.product === product.product);
 
         if (!found) {
           return;
