@@ -5,7 +5,7 @@ import Schema from "./product.db.schema.js";
 import WTFConfig from "../config/wtf.js";
 import { showError } from "../util/log.js";
 import globals from "../global.js";
-import type { Game, GameProduct, GameSubPath, GameUID, SupportedGame } from "../../typings/index.js";
+import type { Game, SupportedGame } from "../../typings/index.js";
 import type { ProductDB, ProductRegion, SupportedGameLanguages } from "../../typings/product.db.js";
 
 const PREFIX = "battle.net/products.ts";
@@ -156,54 +156,6 @@ function validRegion(input: string): ProductRegion {
   return ["us", "eu", "cn", "kr", "tw", "sg", "xx", "beta"].includes(input) ? (input as ProductRegion) : "";
 }
 
-function validUID(input: string): GameUID | "" {
-  return [
-    "wow",
-    "wow_ptr",
-    "wow_beta",
-    "wow_classic",
-    "wow_classic_ptr",
-    "wow_classic_beta",
-    "wow_classic_era",
-    "wow_classic_era_ptr",
-    "wow_classic_era_beta"
-  ].includes(input)
-    ? (input as GameUID)
-    : "";
-}
-
-function validProduct(input: string): GameProduct | "" {
-  return [
-    "wow",
-    "wowt",
-    "wow_beta",
-    "wow_classic",
-    "wow_classic_ptr",
-    "wow_classic_beta",
-    "wow_classic_era",
-    "wow_classic_era_ptr",
-    "wow_classic_era_beta"
-  ].includes(input)
-    ? (input as GameProduct)
-    : "";
-}
-
-function validSubPath(input: string): GameSubPath | "" {
-  return [
-    "_retail_",
-    "_ptr_",
-    "_beta_",
-    "_classic_",
-    "_classic_ptr_",
-    "_classic_beta_",
-    "_classic_era",
-    "_classic_era_ptr",
-    "_classic_era_beta"
-  ].includes(input)
-    ? (input as GameSubPath)
-    : "";
-}
-
 export function products(path: string | null | undefined): Game[] {
   if (typeof path !== "string" || !path.trim()) {
     path = productDbPath();
@@ -234,12 +186,6 @@ export function products(path: string | null | undefined): Game[] {
           return;
         }
 
-        const valid_uid = validUID(product.uid);
-        const valid_product = validProduct(product.product);
-        const valid_subpath = validSubPath(product.settings?.subpath ?? "");
-
-        if (!valid_uid || !valid_product || !valid_subpath) return;
-
         const found = supportedProducts.find((g) => g.uid === product.uid);
 
         if (!found) {
@@ -258,9 +204,9 @@ export function products(path: string | null | undefined): Game[] {
           path,
           text_language: product.settings?.text_languages ?? "",
           speech_language: product.settings?.speech_languages ?? "",
-          uid: valid_uid,
-          product: valid_product,
-          subpath: valid_subpath,
+          uid: product.uid ?? "",
+          product: product.product,
+          subpath: product.settings?.subpath ?? "",
           version: product.product_state?.base?.local_version ?? "",
           family: product.product_family,
           label: found.label,
@@ -276,7 +222,7 @@ export function products(path: string | null | undefined): Game[] {
           const seq = line.trim().split("|");
           const region = validRegion(seq[0] ?? "");
           const version = seq[12] ?? "";
-          const product = validProduct(seq[13] ?? "");
+          const product = seq[13] ?? "";
 
           if (!product) return;
 
@@ -313,7 +259,7 @@ export function products(path: string | null | undefined): Game[] {
         const flavor = readFileSync(`${path}/.flavor.info`, { encoding: "utf8" }).trim().split("\n");
         flavor.shift(); // Product Flavor!STRING:0
 
-        const product = validProduct(flavor[0]?.trim() ?? "");
+        const product = flavor[0]?.trim() ?? "";
 
         if (!product) {
           return [];

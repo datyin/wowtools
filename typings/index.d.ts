@@ -72,8 +72,8 @@ export interface SupportedGameBinary {
 
 export interface SupportedGame {
   subpath: GameSubPath;
-  uid: GameUID;
-  product: GameProduct;
+  uid: string;
+  product: string;
   label: GameLabel;
   binary: SupportedGameBinary;
 }
@@ -84,10 +84,10 @@ export interface Game {
   path: string;
   text_language: SupportedGameLanguages;
   speech_language: SupportedGameLanguages;
-  uid: GameUID;
-  product: GameProduct;
+  uid: string;
+  product: string;
   family: "wow";
-  subpath: GameSubPath;
+  subpath: string;
   version: string;
   label: GameLabel;
   binary: string;
@@ -103,7 +103,7 @@ export const supportedProducts: SupportedGame[];
 export function productDbPath(): string | undefined;
 export function productDbParse(path: string | null | undefined): ProductDB | undefined;
 export function products(path: string | null | undefined): Game[];
-export function addons(path: string, game: GameSubPath): Addon[];
+export function addons(path: string, game: string): Addon[];
 export function characters(path: string): Character[];
 export function parseFlavor(path: string): string;
 export function parseBuild(path: string): string;
